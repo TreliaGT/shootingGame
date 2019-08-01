@@ -29,12 +29,24 @@ public class PlayerControl : MonoBehaviour
     public GameObject HitEffectPrefab;
     public GameObject BulletPrefab;
     public GameObject MuzzleFlash;
+    public GameObject Gun;
+    Animator GunAnimator;
+    AudioSource gunAudio;
+
+    public int MaxAmmo = 30;
+    public int CurrentAmmo = 0;
+
+    
 
     // Start is called before the first frame update
     void Start()
     {
+        GunAnimator = Gun.GetComponent<Animator>();
         controller = GetComponent<CharacterController>();
+        gunAudio = Gun.GetComponent<AudioSource>();
         Cursor.lockState = CursorLockMode.Locked;
+        CurrentAmmo = MaxAmmo;
+ 
     }
 
     // Update is called once per frame
@@ -80,17 +92,28 @@ public class PlayerControl : MonoBehaviour
 
     void Shoot()
     {
-        Instantiate(BulletPrefab, muzzle.position, Quaternion.identity, muzzle).transform.forward = muzzle.forward;
-        RaycastHit hit;
-        if (Physics.Raycast(lookCamera.position, lookCamera.forward, out hit, shootrange, shootMask))
+        if (CurrentAmmo <= 0)
         {
-            // print(hit.point);
-            // print(hit.transform.gameObject.name);  
-           
-            Instantiate(HitEffectPrefab, hit.point, Quaternion.identity).transform.forward = hit.transform.TransformDirection(hit.normal);
+            return;
         }
-        Instantiate(MuzzleFlash, muzzle.position, Quaternion.identity, muzzle).transform.forward = muzzle.forward;
-        StartCoroutine(FireRoute());
+        else
+        {
+            CurrentAmmo -= 1;
+            gunAudio.Play();
+            GunAnimator.SetTrigger("Shoot");
+            Instantiate(BulletPrefab, muzzle.position, Quaternion.identity, muzzle).transform.forward = muzzle.forward;
+            RaycastHit hit;
+            if (Physics.Raycast(lookCamera.position, lookCamera.forward, out hit, shootrange, shootMask))
+            {
+                // print(hit.point);
+                // print(hit.transform.gameObject.name);  
+
+                Instantiate(HitEffectPrefab, hit.point, Quaternion.identity).transform.forward = hit.transform.TransformDirection(hit.normal);
+            }
+            Instantiate(MuzzleFlash, muzzle.position, Quaternion.identity, muzzle).transform.forward = muzzle.forward;
+            StartCoroutine(FireRoute());
+        }
+
     }
 
     IEnumerator FireRoute()
@@ -98,5 +121,16 @@ public class PlayerControl : MonoBehaviour
         firing = true;
         yield return new WaitForSeconds(firerate);
         firing = false;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.tag == "Pickup" && CurrentAmmo < MaxAmmo)
+        {
+            int newAmmo = 0;
+            other.GetComponent<AmmoPickup>().pickup(out newAmmo);
+            CurrentAmmo += newAmmo;
+            CurrentAmmo = Mathf.Clamp(CurrentAmmo, 0, MaxAmmo);
+        }
     }
 }
