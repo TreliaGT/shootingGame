@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerControl : MonoBehaviour
 {
@@ -36,6 +37,7 @@ public class PlayerControl : MonoBehaviour
     public int MaxAmmo = 30;
     public int CurrentAmmo = 0;
 
+    public Text AmmoText;
     
 
     // Start is called before the first frame update
@@ -46,7 +48,8 @@ public class PlayerControl : MonoBehaviour
         gunAudio = Gun.GetComponent<AudioSource>();
         Cursor.lockState = CursorLockMode.Locked;
         CurrentAmmo = MaxAmmo;
- 
+        AmmoText.Text = CurrentAmmo.ToString() + "/" + MaxAmmo.ToString() + "  Ammo";
+
     }
 
     // Update is called once per frame
@@ -99,6 +102,7 @@ public class PlayerControl : MonoBehaviour
         else
         {
             CurrentAmmo -= 1;
+            AmmoText.Text = CurrentAmmo.ToString() + "/" + MaxAmmo.ToString() + "  Ammo";
             gunAudio.Play();
             GunAnimator.SetTrigger("Shoot");
             Instantiate(BulletPrefab, muzzle.position, Quaternion.identity, muzzle).transform.forward = muzzle.forward;
@@ -131,6 +135,7 @@ public class PlayerControl : MonoBehaviour
             other.GetComponent<AmmoPickup>().pickup(out newAmmo);
             CurrentAmmo += newAmmo;
             CurrentAmmo = Mathf.Clamp(CurrentAmmo, 0, MaxAmmo);
+            AmmoText.Text = CurrentAmmo.ToString() + "/" + MaxAmmo.ToString() + "  Ammo";
         }
     }
 }
