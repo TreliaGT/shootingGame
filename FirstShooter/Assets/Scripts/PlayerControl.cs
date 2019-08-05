@@ -47,7 +47,7 @@ public class PlayerControl : MonoBehaviour
         gunAudio = Gun.GetComponent<AudioSource>();
         Cursor.lockState = CursorLockMode.Locked;
         CurrentAmmo = MaxAmmo;
-        AmmoText.Text = CurrentAmmo.ToString() + "/" + MaxAmmo.ToString() + "  Ammo";
+        AmmoText.text = CurrentAmmo.ToString() + "/" + MaxAmmo.ToString() + "  Ammo";
 
     }
 
@@ -101,7 +101,7 @@ public class PlayerControl : MonoBehaviour
         else
         {
             CurrentAmmo -= 1;
-            AmmoText.Text = CurrentAmmo.ToString() + "/" + MaxAmmo.ToString() + "  Ammo";
+            AmmoText.text = CurrentAmmo.ToString() + "/" + MaxAmmo.ToString() + "  Ammo";
             gunAudio.Play();
             GunAnimator.SetTrigger("Shoot");
             Instantiate(BulletPrefab, muzzle.position, Quaternion.identity, muzzle).transform.forward = muzzle.forward;
@@ -134,7 +134,7 @@ public class PlayerControl : MonoBehaviour
             other.GetComponent<AmmoPickup>().pickup(out newAmmo);
             CurrentAmmo += newAmmo;
             CurrentAmmo = Mathf.Clamp(CurrentAmmo, 0, MaxAmmo);
-            AmmoText.Text = CurrentAmmo.ToString() + "/" + MaxAmmo.ToString() + "  Ammo";
+            AmmoText.text = CurrentAmmo.ToString() + "/" + MaxAmmo.ToString() + "  Ammo";
         }
     }
 }
