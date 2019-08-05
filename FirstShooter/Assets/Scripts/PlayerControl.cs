@@ -35,8 +35,7 @@ public class PlayerControl : MonoBehaviour
     AudioSource gunAudio;
 
     public int MaxAmmo = 30;
-    public int CurrentAmmo = 0;
-
+    public int CurrentAmmo = 30;
     public Text AmmoText;
     
 
